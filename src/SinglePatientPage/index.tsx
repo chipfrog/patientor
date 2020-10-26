@@ -1,17 +1,16 @@
 import React from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Entry, Patient } from "../types";
+import { Patient } from "../types";
 import { apiBaseUrl } from "../constants";
 import { useStateValue, updatePatient } from "../state";
 
 const PatientPage: React.FC = () => {
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients, diagnoses }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
 
   React.useState(() => {
     const patientToFetch = Object.values(patients).find(p => p.id === id);
-
     // mahdollisesti ssn-tarkistusta muutettava uusien entryjen lisäämisen takia
     if (patientToFetch !== undefined && patientToFetch.ssn === undefined) {
       const fetchPatient = async () => {
@@ -42,7 +41,7 @@ const PatientPage: React.FC = () => {
             <p>{entry.date} {entry.description}</p>
             <ul>
               {entry.diagnosisCodes?.map((code) => (
-                <li key={code}>{code}</li>
+                <li key={code}>{code} {Object.values(diagnoses).find(d => d.code === code)?.name} </li>
               ))}
             </ul>
            </div>
