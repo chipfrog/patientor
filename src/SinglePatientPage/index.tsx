@@ -4,9 +4,11 @@ import { useParams } from "react-router-dom";
 import { Patient } from "../types";
 import { apiBaseUrl } from "../constants";
 import { useStateValue, updatePatient } from "../state";
+import { Card, Icon } from "semantic-ui-react";
+import EntryDetails from "../components/EntryDetails";
 
 const PatientPage: React.FC = () => {
-  const [{ patients, diagnoses }, dispatch] = useStateValue();
+  const [{ patients }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
 
   React.useState(() => {
@@ -30,20 +32,27 @@ const PatientPage: React.FC = () => {
   if (patient !== undefined && patient.entries !== undefined) {
     return(
       <div>
-        <h1>{patient.name}</h1>
+        <h1>
+          {patient.name} 
+          {patient.gender === 'male' && <Icon className="mars" />}
+          {patient.gender === 'female' && <Icon className="venus" />}
+          {patient.gender === 'other' && <Icon className="genderless" />}
+        </h1>
         <p>ssn: {patient.ssn}</p>
         <p>occupation: {patient.occupation}</p>
-        <p>gender: {patient.gender}</p>
         <div>
          <h2>entries</h2>
          {patient.entries.map((entry) => (
            <div key={entry.id}>
-            <p>{entry.date} {entry.description}</p>
+             <Card.Group>
+              <EntryDetails entry={entry} />
+            </Card.Group>
+            {/* <p>{entry.date} {entry.description}</p>
             <ul>
               {entry.diagnosisCodes?.map((code) => (
                 <li key={code}>{code} {Object.values(diagnoses).find(d => d.code === code)?.name} </li>
               ))}
-            </ul>
+            </ul> */}
            </div>
          ))}
         </div>

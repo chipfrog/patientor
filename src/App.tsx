@@ -32,6 +32,7 @@ const App: React.FC = () => {
           `${apiBaseUrl}/diagnoses`
         );
         dispatch(setDiagnoseList(diagnosesListFromApi));
+        console.log("fetching diagnoses...");
       } catch (e) {
         console.error(e);
       }
