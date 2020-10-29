@@ -12,16 +12,31 @@ import AddEntryModal from "../AddEntryModal";
 const PatientPage: React.FC = () => {
   const [{ patients }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
-
+  
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | undefined>();
-
   const openModal = (): void => setModalOpen(true);
-
   const closeModal = (): void => {
     setModalOpen(false);
     setError(undefined);
   };
+
+  const fetchPatient = async () => {
+    try {      
+      const { data: patientFromApi } = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
+      dispatch(updatePatient(patientFromApi));
+      console.log("fetching...");
+    } catch(error) {
+      console.log(error);
+    }
+  };
+
+  React.useEffect(() => {
+    const patient = Object.values(patients).find(p => p.id === id);
+    if (patient?.ssn === undefined) {
+      fetchPatient();
+    }
+  }, [dispatch]);
 
   const submitNewEntry = async (values: EntryFormValues) => {
     try {
@@ -30,33 +45,18 @@ const PatientPage: React.FC = () => {
         values
       );
       dispatch(addEntryToPatient(id, newEntry));
+      fetchPatient();
       closeModal();
-      // dispatch({ type: "ADD_ENTRY", payload: { newEntry, id });
     } catch (error) {
       console.log(error.response.data);
     }
   };
-
-  React.useState(() => {
-    const patientToFetch = Object.values(patients).find(p => p.id === id);
-    // mahdollisesti ssn-tarkistusta muutettava uusien entryjen lisäämisen takia
-    if (patientToFetch !== undefined && patientToFetch.ssn === undefined) {
-      const fetchPatient = async () => {
-        try {        
-          const { data: patientFromApi } = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
-          dispatch(updatePatient(patientFromApi));
-        } catch(error) {
-          console.log(error);
-        }
-      };
-      fetchPatient();
-    }
-  });
-
   const patient = Object.values(patients).find(p => p.id === id);
 
-  if (patient !== undefined && patient.entries !== undefined) {
-    return(
+  if (patient === undefined || patient.entries === undefined) {
+    return <div>loading...</div>;
+  }
+    return (
       <div>
         <h1>
           {patient.name} 
@@ -82,17 +82,9 @@ const PatientPage: React.FC = () => {
           error={error}
           onClose={closeModal}
         />
-        <Button onClick={() => openModal()}>Add New Patient</Button>
+        <Button onClick={() => openModal()}>Add New Entry</Button>
       </div>
     );
-  } 
-  else {
-    return (
-      <div>
-        <p>Patient not found</p>
-      </div>
-    );
-  }
 };
 
 export default PatientPage;

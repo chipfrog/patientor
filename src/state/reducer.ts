@@ -21,8 +21,6 @@ export type Action =
   | {
       type: "ADD_ENTRY";
       payload: { patientId: string; entry: Entry };
-      // payload: {patient: Patient; entry: Entry};
-      // payload: { entry: Entry; id: string };
     };
 
 export const addEntryToPatient = (patientId: string, entry: Entry) => {
@@ -31,16 +29,6 @@ export const addEntryToPatient = (patientId: string, entry: Entry) => {
     payload: { patientId, entry }
   };
 };
-    
-// export const addEntryToPatient = (entry: HealthCheckEntry, id: string) => {
-//   return {
-//     type: "ADD_ENTRY" as const,
-//     payload: {
-//       entry,
-//       id
-//     }
-//   };
-// };
 
 export const setPatientList = (patients: Patient[]) => {
   return {
@@ -125,18 +113,6 @@ export const reducer = (state: State, action: Action): State => {
             action.payload.entry
           ]
         }
-
-        // ...state,
-        // patients: {
-        //   ...state.patients,
-        //   [action.payload.patient.id]: {
-        //     ...state.patients[action.payload.patient.id], 
-        //     entries: {
-        //       ...action.payload.patient.entries, 
-        //       ...action.payload.entry
-        //     }  
-        //   }
-        // }
       };  
     default:
       return state;

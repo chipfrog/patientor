@@ -38,7 +38,7 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         if (!values.specialist) {
           errors.specialist = requiredError;
         }
-        if (!values.healthCheckRating) {
+        if (values.healthCheckRating < 0 || values.healthCheckRating > 3) {
           errors.healthCheckRating = requiredError;
         }
         return errors;
@@ -49,25 +49,25 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
           <Form className="form ui">
             <Field 
               label="Description"
-              placeHolder="Descrition"
+              placeholder="Description"
               name="description"
               component={TextField}
             />
             <Field
               label="Date"
-              placeHolder="YYYY-MM-DD"
+              placeholder="YYYY-MM-DD"
               name="date"
               component={TextField}
             />
             <Field 
               label="Specialist"
-              placeHolder="Specialist"
+              placeholder="Specialist"
               name="specialist"
               component={TextField}
             />
             <Field 
               label="Health rating"
-              placeholder="0-3"
+              placeholder= "0-3"
               name="healthCheckRating"
               component={NumberField}
               min={0}
