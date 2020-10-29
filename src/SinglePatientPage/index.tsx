@@ -47,8 +47,9 @@ const PatientPage: React.FC = () => {
       dispatch(addEntryToPatient(id, newEntry));
       fetchPatient();
       closeModal();
-    } catch (error) {
-      console.log(error.response.data);
+    } catch (e) {
+      console.log(e.response.data);
+      setError(e.response.data);
     }
   };
   const patient = Object.values(patients).find(p => p.id === id);
